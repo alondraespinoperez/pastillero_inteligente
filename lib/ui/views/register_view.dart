@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:pastillero_inteligente/providers/auth_provider.dart';
 import 'package:pastillero_inteligente/theme/app_theme.dart';
 import 'package:pastillero_inteligente/ui/layouts/auth/auth_layout.dart';
+import 'package:pastillero_inteligente/utils/validators.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -70,7 +71,7 @@ class _RegisterViewState extends State<RegisterView> {
                 labelText: 'Nombre completo',
                 prefixIcon: Icon(Icons.person_outline),
               ),
-              validator: (v) => v == null || v.isEmpty ? 'Requerido' : null,
+              validator: (v) => Validators.requerido(v, campo: 'Nombre'),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -79,7 +80,7 @@ class _RegisterViewState extends State<RegisterView> {
                 labelText: 'Especialidad',
                 prefixIcon: Icon(Icons.medical_services_outlined),
               ),
-              validator: (v) => v == null || v.isEmpty ? 'Requerido' : null,
+              validator: (v) => Validators.requerido(v, campo: 'Especialidad'),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -88,7 +89,7 @@ class _RegisterViewState extends State<RegisterView> {
                 labelText: 'Cedula / Licencia medica',
                 prefixIcon: Icon(Icons.badge_outlined),
               ),
-              validator: (v) => v == null || v.isEmpty ? 'Requerido' : null,
+              validator: (v) => Validators.requerido(v, campo: 'Cedula'),
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -96,9 +97,10 @@ class _RegisterViewState extends State<RegisterView> {
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: 'Correo electronico',
+                hintText: 'ejemplo@dominio.com',
                 prefixIcon: Icon(Icons.email_outlined),
               ),
-              validator: (v) => v == null || v.isEmpty ? 'Requerido' : null,
+              validator: Validators.correo,
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -106,10 +108,10 @@ class _RegisterViewState extends State<RegisterView> {
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'Contrasena',
+                hintText: 'Minimo 8 caracteres',
                 prefixIcon: Icon(Icons.lock_outline),
               ),
-              validator: (v) =>
-                  v == null || v.length < 6 ? 'Minimo 6 caracteres' : null,
+              validator: Validators.password,
             ),
             const SizedBox(height: 24),
             ElevatedButton(

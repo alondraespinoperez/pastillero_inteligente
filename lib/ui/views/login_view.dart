@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:pastillero_inteligente/providers/auth_provider.dart';
 import 'package:pastillero_inteligente/theme/app_theme.dart';
 import 'package:pastillero_inteligente/ui/layouts/auth/auth_layout.dart';
+import 'package:pastillero_inteligente/utils/validators.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -54,10 +55,10 @@ class _LoginViewState extends State<LoginView> {
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: 'Correo electronico',
+                hintText: 'ejemplo@dominio.com',
                 prefixIcon: Icon(Icons.email_outlined),
               ),
-              validator: (v) =>
-                  v == null || v.isEmpty ? 'Ingresa tu correo' : null,
+              validator: Validators.correo,
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -65,10 +66,10 @@ class _LoginViewState extends State<LoginView> {
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'Contrasena',
+                hintText: 'Minimo 8 caracteres',
                 prefixIcon: Icon(Icons.lock_outline),
               ),
-              validator: (v) =>
-                  v == null || v.isEmpty ? 'Ingresa tu contrasena' : null,
+              validator: Validators.password,
             ),
             const SizedBox(height: 24),
             ElevatedButton(
@@ -90,6 +91,13 @@ class _LoginViewState extends State<LoginView> {
               child: const Text(
                 'No tienes cuenta? Registrate',
                 style: TextStyle(color: AppColors.primaryDark),
+              ),
+            ),
+            TextButton(
+              onPressed: () => context.go('/dashboard'),
+              child: const Text(
+                'Entrar como Demo (sin backend)',
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
             ),
           ],
