@@ -80,7 +80,8 @@ class _RegisterViewState extends State<RegisterView> {
                 labelText: 'Especialidad',
                 prefixIcon: Icon(Icons.medical_services_outlined),
               ),
-              validator: (v) => Validators.requerido(v, campo: 'Especialidad'),
+              validator: (v) =>
+                  Validators.requerido(v, campo: 'Especialidad'),
             ),
             const SizedBox(height: 16),
             TextFormField(

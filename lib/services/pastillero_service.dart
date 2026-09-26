@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
-import '../models/paciente_model.dart';
-import '../models/medicamento_model.dart';
-import 'api_client.dart';
+
+import 'package:pastillero_inteligente/models/medicamento_model.dart';
+import 'package:pastillero_inteligente/models/paciente_model.dart';
+import 'package:pastillero_inteligente/services/api_client.dart';
 
 class PastilleroService {
   final ApiClient _apiClient = ApiClient();
@@ -14,7 +15,8 @@ class PastilleroService {
       });
       return response.data;
     } on DioException catch (e) {
-      final message = e.response?.data['message'] ?? 'Error de inicio de sesion';
+      final message =
+          e.response?.data['message'] ?? 'Error de inicio de sesion';
       throw Exception(message);
     }
   }
@@ -35,7 +37,8 @@ class PastilleroService {
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => PacienteModel.fromJson(json)).toList();
     } on DioException catch (e) {
-      final message = e.response?.data['message'] ?? 'Error al obtener pacientes';
+      final message =
+          e.response?.data['message'] ?? 'Error al obtener pacientes';
       throw Exception(message);
     }
   }
@@ -45,7 +48,31 @@ class PastilleroService {
       final response = await _apiClient.dio.post('/pacientes', data: data);
       return PacienteModel.fromJson(response.data['data'] ?? response.data);
     } on DioException catch (e) {
-      final message = e.response?.data['message'] ?? 'Error al crear paciente';
+      final message =
+          e.response?.data['message'] ?? 'Error al crear paciente';
+      throw Exception(message);
+    }
+  }
+
+  Future<PacienteModel> updatePaciente(
+      String pacienteId, Map<String, dynamic> data) async {
+    try {
+      final response = await _apiClient.dio
+          .put('/pacientes/$pacienteId', data: data);
+      return PacienteModel.fromJson(response.data['data'] ?? response.data);
+    } on DioException catch (e) {
+      final message =
+          e.response?.data['message'] ?? 'Error al actualizar paciente';
+      throw Exception(message);
+    }
+  }
+
+  Future<void> deletePaciente(String pacienteId) async {
+    try {
+      await _apiClient.dio.delete('/pacientes/$pacienteId');
+    } on DioException catch (e) {
+      final message =
+          e.response?.data['message'] ?? 'Error al eliminar paciente';
       throw Exception(message);
     }
   }
@@ -55,9 +82,23 @@ class PastilleroService {
     try {
       final response = await _apiClient.dio
           .post('/pacientes/$pacienteId/medicamentos', data: data);
-      return MedicamentoModel.fromJson(response.data['data'] ?? response.data);
+      return MedicamentoModel.fromJson(
+          response.data['data'] ?? response.data);
     } on DioException catch (e) {
-      final message = e.response?.data['message'] ?? 'Error al agregar medicamento';
+      final message =
+          e.response?.data['message'] ?? 'Error al agregar medicamento';
+      throw Exception(message);
+    }
+  }
+
+  Future<void> deleteMedicamento(
+      String pacienteId, String medicamentoId) async {
+    try {
+      await _apiClient.dio
+          .delete('/pacientes/$pacienteId/medicamentos/$medicamentoId');
+    } on DioException catch (e) {
+      final message =
+          e.response?.data['message'] ?? 'Error al eliminar medicamento';
       throw Exception(message);
     }
   }

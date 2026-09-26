@@ -1,4 +1,4 @@
-import 'medicamento_model.dart';
+import 'package:pastillero_inteligente/models/medicamento_model.dart';
 
 class PacienteModel {
   final String id;
@@ -9,6 +9,11 @@ class PacienteModel {
   final String idPastillero;
   final List<MedicamentoModel> listaMedicamentos;
 
+  // Contacto de emergencia
+  final String contactoNombre;
+  final String contactoTelefono;
+  final String contactoParentesco;
+
   PacienteModel({
     required this.id,
     required this.nombre,
@@ -17,6 +22,9 @@ class PacienteModel {
     required this.diagnostico,
     required this.idPastillero,
     List<MedicamentoModel>? listaMedicamentos,
+    this.contactoNombre = '',
+    this.contactoTelefono = '',
+    this.contactoParentesco = '',
   }) : listaMedicamentos = listaMedicamentos ?? [];
 
   factory PacienteModel.fromJson(Map<String, dynamic> json) {
@@ -27,8 +35,10 @@ class PacienteModel {
       telefono: json['telefono'] ?? '',
       diagnostico: json['diagnostico'] ?? '',
       idPastillero: json['id_pastillero'] ?? '',
-      listaMedicamentos:
-          (json['medicamentos'] as List<dynamic>?)
+      contactoNombre: json['contacto_nombre'] ?? '',
+      contactoTelefono: json['contacto_telefono'] ?? '',
+      contactoParentesco: json['contacto_parentesco'] ?? '',
+      listaMedicamentos: (json['medicamentos'] as List<dynamic>?)
               ?.map((m) => MedicamentoModel.fromJson(m))
               .toList() ??
           [],
@@ -43,6 +53,9 @@ class PacienteModel {
       'telefono': telefono,
       'diagnostico': diagnostico,
       'id_pastillero': idPastillero,
+      'contacto_nombre': contactoNombre,
+      'contacto_telefono': contactoTelefono,
+      'contacto_parentesco': contactoParentesco,
       'medicamentos': listaMedicamentos.map((m) => m.toJson()).toList(),
     };
   }

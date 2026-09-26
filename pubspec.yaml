@@ -1,5 +1,5 @@
 name: pastillero_inteligente
-description: "PillAut - Control Médico para gestión de pacientes y pastillero robótico"
+description: "Pastillero Inteligente - Control Medico by VitaCode"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -9,27 +9,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  # Enrutamiento
   go_router: ^14.2.0
-
-  # Estado
   provider: ^6.1.2
-
-  # Iconos
   cupertino_icons: ^1.0.6
   flutter_iconly: ^1.0.2
-
-  # Almacenamiento local
   shared_preferences: ^2.2.3
   flutter_secure_storage: ^9.0.0
-
-  # Utilidades
   flutter_svg: ^2.0.9
   intl: ^0.19.0
-
-  # API (Laravel / Django)
   dio: ^5.4.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
