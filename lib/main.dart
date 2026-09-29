@@ -28,6 +28,14 @@ class PastilleroInteligenteApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         routerConfig: appRouter,
+        builder: (context, child) {
+          final mq = MediaQuery.of(context);
+          // Forzar devicePixelRatio a 1.0 -> texto nitido en Web
+          return MediaQuery(
+            data: mq.copyWith(devicePixelRatio: 1.0),
+            child: child ?? const SizedBox.shrink(),
+          );
+        },
       ),
     );
   }

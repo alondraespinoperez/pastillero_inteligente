@@ -20,7 +20,7 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   final _busquedaCtrl = TextEditingController();
   String _filtro = '';
-  String _filtroEstado = 'todos';
+  String _filtroEstado = 'todos'; // todos | con | sin
 
   @override
   void initState() {
@@ -156,6 +156,7 @@ class _DashboardViewState extends State<DashboardView> {
     );
   }
 
+  // ─── Card principal de resumen ─────────────────────────────────────
   Widget _resumenPrincipal(int total, int conMed, int totalMeds) {
     return Container(
       width: double.infinity,
@@ -313,6 +314,7 @@ class _DashboardViewState extends State<DashboardView> {
     );
   }
 
+  // ─── Chips de filtro ───────────────────────────────────────────────
   Widget _chipsFiltro() {
     final opciones = [
       {'key': 'todos', 'label': 'Todos', 'icon': Icons.people_outline},
@@ -381,6 +383,7 @@ class _DashboardViewState extends State<DashboardView> {
     );
   }
 
+  // ─── Buscador ──────────────────────────────────────────────────────
   Widget _buscador() {
     return TextField(
       controller: _busquedaCtrl,
@@ -417,16 +420,17 @@ class _DashboardViewState extends State<DashboardView> {
     );
   }
 
+  // ─── Lista de pacientes ────────────────────────────────────────────
   Widget _listaPacientes(
       PacienteProvider prov, List<PacienteModel> filtrados) {
-    if (prov.isLoading) {
+    if (prov.isLoading && prov.pacientes.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(60),
         child: Center(child: CircularProgressIndicator()),
       );
     }
 
-    if (prov.errorMessage != null) {
+    if (prov.errorMessage != null && prov.pacientes.isEmpty) {
       return Padding(
         padding: const EdgeInsets.all(30),
         child: Column(

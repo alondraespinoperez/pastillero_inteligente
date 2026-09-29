@@ -25,6 +25,7 @@ class AuthProvider extends ChangeNotifier {
   String? get cedula => _cedula;
   String? get correo => _correo;
 
+  // ─── Login ──────────────────────────────────────────────
   Future<bool> login(String email, String password) async {
     _isLoading = true;
     _errorMessage = null;
@@ -33,6 +34,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       final data = await _service.login(email, password);
       final token = data['token'] ?? data['access'];
+
       if (token != null) {
         await _storage.write(key: 'auth_token', value: token);
 
@@ -52,6 +54,7 @@ class AuthProvider extends ChangeNotifier {
         notifyListeners();
         return true;
       }
+
       _errorMessage = 'Token no recibido';
       _isLoading = false;
       notifyListeners();
@@ -64,6 +67,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // ─── Registro ───────────────────────────────────────────
   Future<bool> register(Map<String, dynamic> data) async {
     _isLoading = true;
     _errorMessage = null;
@@ -82,6 +86,30 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  // ─── Cargar perfil desde el backend ─────────────────────
+  Future<void> cargarPerfil() async {
+    try {
+      final data = await _service.me();
+      final user = data['user'];
+      if (user is Map) {
+        _nombreMedico = user['nombre'];
+        _especialidad = user['especialidad'];
+        _cedula = user['cedula'];
+        _correo = user['correo'] ?? user['email'];
+        notifyListeners();
+      }
+    } catch (_) {
+      // Silencioso: si falla, se mantiene lo que ya había
+    }
+  }
+
+  // ─── Verificar si hay sesión guardada ───────────────────
+  Future<bool> tieneToken() async {
+    final token = await _storage.read(key: 'auth_token');
+    return token != null && token.isNotEmpty;
+  }
+
+  // ─── Actualizar perfil localmente ───────────────────────
   void actualizarPerfilLocal({
     String? nombre,
     String? especialidad,
@@ -95,7 +123,13 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // ─── Logout con backend ─────────────────────────────────
   Future<void> logout() async {
+    try {
+      await _service.logout();
+    } catch (_) {
+      // Ignorar errores: el token se elimina localmente igual
+    }
     await _storage.delete(key: 'auth_token');
     _isAuthenticated = false;
     _nombreMedico = null;

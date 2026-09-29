@@ -7,6 +7,7 @@ import 'package:pastillero_inteligente/services/api_client.dart';
 class PastilleroService {
   final ApiClient _apiClient = ApiClient();
 
+  // ─── Autenticación ─────────────────────────────────────────────
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await _apiClient.dio.post('/login', data: {
@@ -31,6 +32,27 @@ class PastilleroService {
     }
   }
 
+  Future<void> logout() async {
+    try {
+      await _apiClient.dio.post('/logout');
+    } on DioException catch (e) {
+      final message =
+          e.response?.data['message'] ?? 'Error al cerrar sesion';
+      throw Exception(message);
+    }
+  }
+
+  Future<Map<String, dynamic>> me() async {
+    try {
+      final response = await _apiClient.dio.get('/me');
+      return response.data;
+    } on DioException catch (e) {
+      final message = e.response?.data['message'] ?? 'Error al obtener perfil';
+      throw Exception(message);
+    }
+  }
+
+  // ─── Pacientes ─────────────────────────────────────────────────
   Future<List<PacienteModel>> getPacientes() async {
     try {
       final response = await _apiClient.dio.get('/pacientes');
@@ -77,6 +99,7 @@ class PastilleroService {
     }
   }
 
+  // ─── Medicamentos ──────────────────────────────────────────────
   Future<MedicamentoModel> addMedicamento(
       String pacienteId, Map<String, dynamic> data) async {
     try {
@@ -91,14 +114,40 @@ class PastilleroService {
     }
   }
 
+  Future<MedicamentoModel> updateMedicamento(
+      String medicamentoId, Map<String, dynamic> data) async {
+    try {
+      final response = await _apiClient.dio
+          .put('/medicamentos/$medicamentoId', data: data);
+      return MedicamentoModel.fromJson(
+          response.data['data'] ?? response.data);
+    } on DioException catch (e) {
+      final message =
+          e.response?.data['message'] ?? 'Error al actualizar medicamento';
+      throw Exception(message);
+    }
+  }
+
   Future<void> deleteMedicamento(
       String pacienteId, String medicamentoId) async {
     try {
-      await _apiClient.dio
-          .delete('/pacientes/$pacienteId/medicamentos/$medicamentoId');
+      await _apiClient.dio.delete('/medicamentos/$medicamentoId');
     } on DioException catch (e) {
       final message =
           e.response?.data['message'] ?? 'Error al eliminar medicamento';
+      throw Exception(message);
+    }
+  }
+
+  Future<MedicamentoModel> toggleMedicamento(String medicamentoId) async {
+    try {
+      final response = await _apiClient.dio
+          .patch('/medicamentos/$medicamentoId/toggle');
+      return MedicamentoModel.fromJson(
+          response.data['data'] ?? response.data);
+    } on DioException catch (e) {
+      final message =
+          e.response?.data['message'] ?? 'Error al cambiar estado';
       throw Exception(message);
     }
   }

@@ -21,6 +21,7 @@ class PacienteProvider extends ChangeNotifier {
         p.id != excluirId);
   }
 
+  // ─── Cargar todos los pacientes del médico autenticado ──────────
   Future<void> cargarPacientes() async {
     _isLoading = true;
     _errorMessage = null;
@@ -36,6 +37,7 @@ class PacienteProvider extends ChangeNotifier {
     }
   }
 
+  // ─── Crear paciente ─────────────────────────────────────────────
   Future<bool> crearPaciente(Map<String, dynamic> data) async {
     if (idPastilleroExiste(data['id_pastillero'] as String)) {
       _errorMessage =
@@ -61,6 +63,7 @@ class PacienteProvider extends ChangeNotifier {
     }
   }
 
+  // ─── Actualizar paciente ────────────────────────────────────────
   Future<bool> actualizarPaciente(
       String pacienteId, Map<String, dynamic> data) async {
     if (idPastilleroExiste(data['id_pastillero'] as String,
@@ -91,6 +94,7 @@ class PacienteProvider extends ChangeNotifier {
     }
   }
 
+  // ─── Eliminar paciente ──────────────────────────────────────────
   Future<bool> eliminarPaciente(String pacienteId) async {
     _isLoading = true;
     _errorMessage = null;
@@ -109,6 +113,7 @@ class PacienteProvider extends ChangeNotifier {
     }
   }
 
+  // ─── Agregar medicamento a un paciente ──────────────────────────
   Future<bool> agregarMedicamento(
       String pacienteId, Map<String, dynamic> data) async {
     _isLoading = true;
@@ -131,6 +136,7 @@ class PacienteProvider extends ChangeNotifier {
     }
   }
 
+  // ─── Eliminar medicamento ───────────────────────────────────────
   Future<bool> eliminarMedicamento(
       String pacienteId, String medicamentoId) async {
     _isLoading = true;
@@ -155,7 +161,9 @@ class PacienteProvider extends ChangeNotifier {
     }
   }
 
-  void toggleCompletado(String pacienteId, String medicamentoId) {
+  // ─── Marcar medicamento como completado/pendiente ───────────────
+  Future<void> toggleCompletado(
+      String pacienteId, String medicamentoId) async {
     final pIndex = _pacientes.indexWhere((p) => p.id == pacienteId);
     if (pIndex == -1) return;
 
@@ -164,50 +172,19 @@ class PacienteProvider extends ChangeNotifier {
         .indexWhere((m) => m.id == medicamentoId);
     if (mIndex == -1) return;
 
-    _pacientes[pIndex].listaMedicamentos[mIndex].estaCompletado =
-        !_pacientes[pIndex].listaMedicamentos[mIndex].estaCompletado;
+    // Optimistic update: cambiar localmente primero
+    final anterior =
+        _pacientes[pIndex].listaMedicamentos[mIndex].estaCompletado;
+    _pacientes[pIndex].listaMedicamentos[mIndex].estaCompletado = !anterior;
     notifyListeners();
-  }
 
-  /// SOLO para pruebas sin backend. Quitar al conectar API real.
-  void cargarDemo() {
-    _pacientes = [
-      PacienteModel(
-        id: 'P001',
-        nombre: 'Maria Gonzalez',
-        edad: 72,
-        telefono: '+52 555 123 4567',
-        diagnostico: 'Hipertension, Diabetes tipo 2',
-        idPastillero: 'PILL-001',
-        listaMedicamentos: [
-          MedicamentoModel(
-            id: 'M001',
-            nombre: 'Losartan',
-            dosis: '50 mg',
-            horaToma: '08:00',
-            numeroCompartimento: 1,
-            frecuencia: 'Cada 24 horas',
-          ),
-          MedicamentoModel(
-            id: 'M002',
-            nombre: 'Metformina',
-            dosis: '850 mg',
-            horaToma: '14:00',
-            numeroCompartimento: 2,
-            frecuencia: 'Cada 12 horas',
-            estaCompletado: true,
-          ),
-        ],
-      ),
-      PacienteModel(
-        id: 'P002',
-        nombre: 'Jose Ramirez',
-        edad: 65,
-        telefono: '+52 555 987 6543',
-        diagnostico: 'Artritis reumatoide',
-        idPastillero: 'PILL-002',
-      ),
-    ];
-    notifyListeners();
+    try {
+      await _service.toggleMedicamento(medicamentoId);
+    } catch (e) {
+      // Si falla, revertir el cambio local
+      _pacientes[pIndex].listaMedicamentos[mIndex].estaCompletado = anterior;
+      _errorMessage = e.toString().replaceFirst('Exception: ', '');
+      notifyListeners();
+    }
   }
 }

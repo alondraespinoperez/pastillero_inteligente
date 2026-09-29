@@ -447,8 +447,8 @@ class PacienteDetalleView extends StatelessWidget {
             Column(
               children: [
                 IconButton(
-                  onPressed: () {
-                    context
+                  onPressed: () async {
+                    await context
                         .read<PacienteProvider>()
                         .toggleCompletado(paciente.id, med.id);
                   },

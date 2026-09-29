@@ -1,14 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class ApiClient {
-  static const String baseUrl = 'http://10.0.2.2:8000/api';
+import 'package:pastillero_inteligente/utils/env.dart';
 
+class ApiClient {
   final Dio _dio = Dio();
   final _storage = const FlutterSecureStorage();
 
   ApiClient() {
-    _dio.options.baseUrl = baseUrl;
+    _dio.options.baseUrl = Env.apiBaseUrl;
     _dio.options.connectTimeout = const Duration(seconds: 15);
     _dio.options.receiveTimeout = const Duration(seconds: 15);
 

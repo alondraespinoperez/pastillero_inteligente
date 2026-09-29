@@ -93,13 +93,6 @@ class _LoginViewState extends State<LoginView> {
                 style: TextStyle(color: AppColors.primaryDark),
               ),
             ),
-            TextButton(
-              onPressed: () => context.go('/dashboard'),
-              child: const Text(
-                'Entrar como Demo (sin backend)',
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
-              ),
-            ),
           ],
         ),
       ),
